@@ -3,8 +3,6 @@
 
 require "blockGrid"
 
-local randNumIntr
-
 local maxRoomSects = 4
 local minRoomSectW = 3
 local minRoomSectH = 3
@@ -14,22 +12,6 @@ local maxRoomSectH = 6
 -- Maximum distance between two rooms placed in succession
 local maxRoomDistX = 4
 local maxRoomDistY = 4
-
-
--- Local functions --
-
---- Returns a random number within an specified interval
--- @param lower  Integer. Lowest value of interval
--- @param upper  Integer. Highest value of interval
--- @return  Integer [lower, upper]. Random number within interval
-randNumIntr = function (lower, upper)
-   lower = math.floor(lower)
-   upper = math.floor(upper)
-   local interval = upper - lower + 1
-   return math.random(interval) + lower - 1
-end
-
-
 
 -- Global functions --
 
@@ -149,14 +131,14 @@ genRoom2 = function (totalSects)
    room_beta[1] = {
       x = 1,
       y = 1,
-      w = randNumIntr(minRoomSectW, maxRoomSectW),
-      h = randNumIntr(minRoomSectH, maxRoomSectH)
+      w = math.random(math.floor(minRoomSectW) + 1, math.floor(maxRoomSectW)),
+      h = math.random(math.floor(minRoomSectH) + 1, math.floor(maxRoomSectH)),
    }
    for sectNum = 2, totalSects do
       local last = room_beta[sectNum - 1]
       local new = {
-	 w = randNumIntr(minRoomSectW, maxRoomSectW),
-	 h = randNumIntr(minRoomSectH, maxRoomSectH)
+	w = math.random(math.floor(minRoomSectW) + 1, math.floor(maxRoomSectW)),
+	h = math.random(math.floor(minRoomSectH) + 1, math.floor(maxRoomSectH)),
       }
       
       -- Determine whether or not to grow section
@@ -250,8 +232,11 @@ function genWorld(totalRooms, circleRooms)
    
    for rNum = 1, totalRooms do
       rooms[rNum] = {}
-      rooms[rNum].w = randNumIntr(minRoomSectW, maxRoomSectW)
-      rooms[rNum].h = randNumIntr(minRoomSectH, maxRoomSectH)
+      rooms[rNum].w = math.random(math.floor(minRoomSectW) + 1,
+         math.floor(maxRoomSectW))
+      rooms[rNum].h = math.random(math.floor(minRoomSectH) + 1,
+         math.floor(maxRoomSectH))
+
    end
    
    -- Make a rough map of room configuration
@@ -314,7 +299,7 @@ function genWorld(totalRooms, circleRooms)
 	 limMin_y / my
       )
 			  
-      strg = randNumIntr(min_strg, max_strg)
+      strg = math.random(math.floor(min_strg) + 1, math.floor(max_strg))
       
       shift_x = math.floor(mx * strg)
       shift_y = math.floor(my * strg)
