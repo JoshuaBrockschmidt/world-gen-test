@@ -131,14 +131,14 @@ genRoom2 = function (totalSects)
    room_beta[1] = {
       x = 1,
       y = 1,
-      w = math.random(math.floor(minRoomSectW) + 1, math.floor(maxRoomSectW)),
-      h = math.random(math.floor(minRoomSectH) + 1, math.floor(maxRoomSectH)),
+      w = math.random(minRoomSectW, maxRoomSectW),
+      h = math.random(minRoomSectH, maxRoomSectH)
    }
    for sectNum = 2, totalSects do
       local last = room_beta[sectNum - 1]
       local new = {
-	w = math.random(math.floor(minRoomSectW) + 1, math.floor(maxRoomSectW)),
-	h = math.random(math.floor(minRoomSectH) + 1, math.floor(maxRoomSectH)),
+	 w = math.random(minRoomSectW, maxRoomSectW),
+	 h = math.random(minRoomSectH, maxRoomSectH)
       }
       
       -- Determine whether or not to grow section
@@ -232,11 +232,8 @@ function genWorld(totalRooms, circleRooms)
    
    for rNum = 1, totalRooms do
       rooms[rNum] = {}
-      rooms[rNum].w = math.random(math.floor(minRoomSectW) + 1,
-         math.floor(maxRoomSectW))
-      rooms[rNum].h = math.random(math.floor(minRoomSectH) + 1,
-         math.floor(maxRoomSectH))
-
+      rooms[rNum].w = math.random(minRoomSectW, maxRoomSectW)
+      rooms[rNum].h = math.random(minRoomSectH, maxRoomSectH)
    end
    
    -- Make a rough map of room configuration
@@ -283,6 +280,14 @@ function genWorld(totalRooms, circleRooms)
 	 my = 1e-20
       end
       
+      -- Get minimum strength
+      limMin_x = (mx > 0) and minRoomSectW or -minRoomSectW
+      limMin_y = (my > 0) and minRoomSectH or -minRoomSectH
+      min_strg = math.min(
+	 limMin_x / mx,
+	 limMin_y / my
+      )
+      
       -- Get maximum strength
       limMax_x = (mx > 0) and w1 or -w2
       limMax_y = (my > 0) and h1 or -h2
@@ -291,15 +296,18 @@ function genWorld(totalRooms, circleRooms)
 	 limMax_y / my
       )
       
-      -- Get minimum strength
-      limMin_x = (mx > 0) and minRoomSectW or -minRoomSectW
-      limMin_y = (my > 0) and minRoomSectH or -minRoomSectH
-      min_strg = math.min(
-	 limMin_x / mx,
-	 limMin_y / my
-      )
-			  
-      strg = math.random(math.floor(min_strg) + 1, math.floor(max_strg))
+      -- Enlarge number then shrink it back to size to get more decimal varience
+      print("min-max:",math.floor(min_strg * 10) + 1, math.floor(max_strg * 10))
+      do
+	 local newMin = math.floor(min_strg * 10) + 1
+	 local newMax = math.floor(max_strg * 10)
+	 if newMin >= newMax then
+	    strg = newMax / 10
+	 else
+	    strg = math.random(newMin, newMax) / 10
+	 end
+      end
+      print("strg:",strg)
       
       shift_x = math.floor(mx * strg)
       shift_y = math.floor(my * strg)
@@ -342,3 +350,14 @@ function genWorld(totalRooms, circleRooms)
    
    return world
 end
+
+
+
+
+maxRoomSects = math.floor(maxRoomSects)
+minRoomSectW = math.floor(minRoomSectW)
+minRoomSectH = math.floor(minRoomSectH)
+maxRoomSectW = math.floor(maxRoomSectW)
+maxRoomSectH = math.floor(maxRoomSectH)
+maxRoomDistX = math.floor(maxRoomDistX)
+maxRoomDistY = math.floor(maxRoomDistY)
